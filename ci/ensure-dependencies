@@ -1,0 +1,33 @@
+#!/bin/bash
+set -o nounset -o errexit -o pipefail
+
+# We've seen cases where `make ensure` fails due to upstream
+# issues (often during a dep ensure when hitting go.googlesource.com)
+#
+# Instead of failing the job right away, try a few times (after pausing).
+try_make_ensure() {
+    local count=0
+    local limit=5
+
+    while [ "${count}" -lt "${limit}" ]; do
+        if make ensure; then
+            return 0;
+        else
+            echo "make ensure failed"
+            sleep 10
+            count=$((${count} + 1))
+        fi
+    done
+
+    return 1
+}
+
+# Run our target to dep ensure and yarn install everything
+try_make_ensure
+
+# Ensure the working tree is clean (make ensure may have updated lock files)
+$(go env GOPATH)/src/github.com/pulumi/scripts/ci/check-worktree-is-clean.sh
+
+# Set stdout back to blocking to avoid problems writing large outputs.
+# https://github.com/pulumi/pulumi-ppc/issues/176
+python3 -c 'import fcntl, os, sys; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); print("stdout was " + ("nonblocking" if flags & os.O_NONBLOCK else "blocking")); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags & ~os.O_NONBLOCK)'
