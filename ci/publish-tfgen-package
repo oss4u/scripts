@@ -28,18 +28,6 @@ fi
 
 # Publish the NPM package.
 echo "Publishing NPM package to NPMjs.com:"
-
-echo "---------------- SCRIPT_ROOT ----------------"
-ls -l $SCRIPT_ROOT 
-echo "---------------- SOURCE_ROOT ----------------"
-ls -l $SOURCE_ROOT
-echo "---------------- SDK_ROOT ----------------"
-ls -l $SOURCE_ROOT/sdk/nodejs/bin/
-echo "---------------- PACKAGE.JSON ----------------"
-cat ${SOURCE_ROOT}/sdk/nodejs/bin/package.json
-
-
-
 # First, add an install script to our package.json
 mkdir -p "${SOURCE_ROOT}/sdk/nodejs/bin/scripts"
 cp "${SCRIPT_ROOT}/install-pulumi-plugin.js" \
