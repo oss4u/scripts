@@ -101,6 +101,9 @@ fi
 fi
 npm info 2>/dev/null
 
+echo "------------------- LOGS -------------------"
+cat /home/runner/.npm/_logs/*.log
+echo "------------------- / LOGS -------------------"
 # And finally restore the original package.json.
 mv package.json package.json.publish
 mv package.json.dev package.json
